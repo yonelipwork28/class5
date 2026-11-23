@@ -3,15 +3,17 @@ import sys
 from PySide6.QtWidgets import (
     QAbstractSpinBox,
     QApplication,
+    QHBoxLayout,
     QMainWindow,
     QPushButton,
+    QSlider,
     QSpinBox,
     QVBoxLayout,
     QWidget,
 )
 
 
-from PySide6.QtCore import QTimer
+from PySide6.QtCore import QTimer, Qt
 
 
 
@@ -36,9 +38,26 @@ class MainWindow(QMainWindow):
         self.toggle_button.setCheckable(True)
         self.toggle_button.toggled.connect(self.button_method)
 
-        layout = QVBoxLayout()
-        layout.addWidget(self.spin_box)
-        layout.addWidget(self.toggle_button)
+        controls_layout = QVBoxLayout()
+        controls_layout.addWidget(self.spin_box)
+        controls_layout.addWidget(self.toggle_button)
+
+        self.slider = QSlider(Qt.Orientation.Vertical)
+        self.slider.setRange(0,255)
+        self.slider.valueChanged.connect(self.slider_method)
+
+        self.second_spinbox = QSpinBox()
+        self.second_spinbox.setReadOnly(True)
+        self.second_spinbox.setButtonSymbols(QAbstractSpinBox.ButtonSymbols.NoButtons)
+        self.second_spinbox.setStyleSheet("background-color: lightgray;")
+
+        right_layout = QVBoxLayout()
+        right_layout.addWidget(self.slider)
+        right_layout.addWidget(self.second_spinbox)
+
+        layout = QHBoxLayout()
+        layout.addLayout(controls_layout)
+        layout.addLayout(right_layout)
 
         central_widget = QWidget()
         central_widget.setLayout(layout)
@@ -57,6 +76,10 @@ class MainWindow(QMainWindow):
     def timer_method(self):
         self.counter+=1
         self.spin_box.setValue(self.counter)
+
+    def slider_method(self):
+        value = self.slider.value()
+        self.second_spinbox.setValue(value)
 
 
 
